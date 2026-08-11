@@ -1,4 +1,4 @@
-FROM ubuntu:26.04
+FROM ubuntu:24.04
 ARG USRNAME=
 ARG USR_UID=
 ARG USR_GID=
@@ -17,21 +17,21 @@ ENV http_proxy=$HTTP_PROXY
 ENV force_color_prompt=yes
 
 # RUN apt update && apt upgrade -y && apt install -y software-properties-common \
-#   && add-apt-repository ppa:fish-shell/release-4
-RUN apt update && apt upgrade -y && apt install -y software-properties-common \
+RUN apt update && apt upgrade -y \
+    && apt install -y  pkg-config libssl-dev build-essential software-properties-common wget sudo \
+    && add-apt-repository ppa:fish-shell/release-4 \
     && wget -qO- https://apt.fury.io/nushell/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/fury-nushell.gpg \
     && echo "deb [signed-by=/etc/apt/keyrings/fury-nushell.gpg] https://apt.fury.io/nushell/ /" | sudo tee /etc/apt/sources.list.d/fury-nushell.list \
+    && apt update \
+    && apt install -y nushell fish
 
+# general packages
 RUN apt update && apt install -y \
-    build-essential \
     curl \
-    fish \
-    nushell \
     git \
     git-lfs \
     iproute2 \
     ripgrep \
-    sudo \
     tmux \
     tree \
     unzip \
@@ -39,6 +39,47 @@ RUN apt update && apt install -y \
     wget \
     lua5.4 \
     luarocks
+
+# yocto deps
+# https://docs.yoctoproject.org/singleindex.html#build-host-packages
+# 6.0.19 is used by the ST docs
+# https://docs.yoctoproject.org/scarthgap/singleindex.html#build-host-packages
+RUN sudo apt install -y \
+    build-essential \
+    chrpath \
+    cpio \
+    debianutils \
+    diffstat \
+    file \
+    gawk \
+    gcc \
+    git \
+    iputils-ping \
+    libacl1 \
+    liblz4-tool \
+    locales \
+    python3 \
+    python3-git \
+    python3-jinja2 \
+    python3-pexpect \
+    python3-pip \
+    python3-subunit \
+    socat \
+    texinfo \
+    unzip \
+    wget \
+    xz-utils \
+    zstd
+
+# some ST extra deps
+# https://wiki.st.com/stm32mpu/wiki/PC_prerequisites
+RUN sudo apt-get install -y build-essential libncurses-dev libyaml-dev libssl-dev \
+    && sudo apt install python-is-python3 \
+    && sudo apt-get install -y coreutils bsdmainutils sed curl bc lrzsz corkscrew cvs subversion mercurial nfs-common nfs-kernel-server libarchive-zip-perl dos2unix texi2html libxml2-utils
+# ToDo check if we really need the rpo utilitie, since we dont build android for the board
+# ToDo check if additional configs are necessary
+
+
 
 # Ubuntu 24.04 has already the user 1000(ubuntu) and the group users(100) 1000(ubuntu).
 # Add user if not using default uid like in a enterprise.
