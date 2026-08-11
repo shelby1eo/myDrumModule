@@ -15,7 +15,7 @@ dockerRm:
 	sudo docker rm -f mydrummodule
 
 dockerShell:
-	sudo docker exec -it mydrummodule fish
+	sudo docker exec -it mydrummodule bash
 
 dockerBuild:
 	sudo docker build \
@@ -38,7 +38,7 @@ DOCKER_RUN_BASE_COMMAND= \
 
 # if you are under a proxy please set on ~/.docker/config.json to the address 127.0.0.1:3128
 dockerRun:
-	$(DOCKER_RUN_BASE_COMMAND) -dit mydrummoduleimage "fish"
+	$(DOCKER_RUN_BASE_COMMAND) -dit mydrummoduleimage "bash"
 
 # # will start the webserver on localhost:3000
 # dockerStartBook:

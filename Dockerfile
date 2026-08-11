@@ -79,6 +79,12 @@ RUN sudo apt-get install -y build-essential libncurses-dev libyaml-dev libssl-de
 # ToDo check if we really need the rpo utilitie, since we dont build android for the board
 # ToDo check if additional configs are necessary
 
+# zephyr deps
+# https://docs.zephyrproject.org/latest/develop/getting_started/index.html
+RUN sudo apt install -y --no-install-recommends git cmake ninja-build gperf \
+  ccache dfu-util device-tree-compiler wget python3-dev python3-venv python3-tk \
+  xz-utils file make gcc gcc-multilib g++-multilib libsdl2-dev libmagic1
+
 
 
 # Ubuntu 24.04 has already the user 1000(ubuntu) and the group users(100) 1000(ubuntu).
@@ -116,9 +122,15 @@ RUN cd /tmp \
     && echo "export PATH=/home/${USRNAME}/bin/nvim-linux-x86_64/bin:\$PATH" >> /home/$USRNAME/.bashrc \
     && echo "set -x PATH ~/bin ~/.cargo/bin ~/bin/nvim-linux-x86_64/bin \$PATH" >> /home/${USRNAME}/.config/fish/config.fish
 
+RUN sudo locale-gen en_US.UTF-8  
+ENV LANG=en_US.UTF-8  
+ENV LANGUAGE=en_US:en  
+ENV LC_ALL=en_US.UTF-8   
+
 # remove proxy var from the image
 ENV https_proxy=
 ENV http_proxy=
-
+# RUN sudo update-locale LANG=en_US.UTF-8
 # use login shell inorder to have .hashrc sourced.
-ENTRYPOINT ["bash", "-l"]
+ENTRYPOINT ["bash", "-l", "-c"]
+CMD ["bash"]
